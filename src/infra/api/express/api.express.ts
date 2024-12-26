@@ -4,7 +4,7 @@ import { Route } from "./routes/route";
 
 
 export class ApiExpress implements Api {
-    public app: Express;    
+    private app: Express;    
        
 
     private constructor(routes: Route[]) {

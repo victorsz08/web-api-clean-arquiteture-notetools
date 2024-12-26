@@ -17,6 +17,42 @@ model User {
   lastName String
   isAdmin Boolean
   password String
+  notes Note[]
+  contracts Contract[]
   createdAt DateTime
   updatedAt DateTime
+
+  @@map("users")
+}
+
+
+model Contract {
+  id String @id
+  number Int
+  local String
+  scheduleDate DateTime
+  scheduleTime String
+  observation String
+  type String
+  status String
+  price Float
+  contact String
+  user User @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  userId String
+  createdAt DateTime
+  updatedAt DateTime
+
+  @@map("contracts")
+}
+
+model Note {
+  id String @id
+  title String
+  content String
+  user User @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  userId String
+  createdAt DateTime
+  updatedAt DateTime
+
+  @@map("notes")
 }

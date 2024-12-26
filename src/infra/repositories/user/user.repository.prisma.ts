@@ -98,12 +98,12 @@ export class UserRepositoryPrisma implements UserGateway {
 
         await this.repository.user.update({
             where: {
-                id
+                id: user.id
             },
             data: {
-                username,
-                firstName,
-                lastName
+                username: username,
+                firstName: firstName,
+                lastName: lastName
             }
         });
 

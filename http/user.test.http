@@ -1,0 +1,45 @@
+
+
+
+###
+POST http://localhost:8000/users
+Content-Type: application/json
+
+{
+    "username": "victorsz08",
+    "firstName": "Victor",
+    "lastName": "Siqueira",
+    "password": "Joaovictorsal09."
+}
+
+###
+GET http://localhost:8000/users
+
+###
+GET http://localhost:8000/users/78c29e50-1e66-4b66-9202-10c0a9d7d761
+
+###
+PUT http://localhost:8000/users/78c29e50-1e66-4b66-9202-10c0a9d7d761
+Content-Type: application/json
+
+{
+    "username": "victorsz08",
+    "firstName": "Joao Victor",
+    "lastName": "Araujo"
+}
+
+###
+DELETE http://localhost:8000/users/:id
+
+
+###
+PUT http://localhost:8000/users/alterpassword/78c29e50-1e66-4b66-9202-10c0a9d7d761
+Content-Type: application/json
+
+{
+    "currentPassword": "130rln0nog",
+    "newPassword": "Joaovictorsal09."
+}
+
+###
+POST http://localhost:8000/users/resetpassword/78c29e50-1e66-4b66-9202-10c0a9d7d761

@@ -25,8 +25,8 @@ export class UpdateUserRoute implements Route {
     
     public getHandler(): (request: Request, response: Response) => Promise<any> {
         return async (request: Request, response: Response) => {
-            const { id } = request.params;
             const { username, firstName, lastName } = request.body;
+            const { id } = request.params;
             
             try {
                 const input: UpdateUserInputDto = {
