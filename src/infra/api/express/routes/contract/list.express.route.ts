@@ -1,8 +1,9 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { Status, TypeContract } from "../../../../../domain/entities/contract/contract.entity";
 import { HttpMethod, Route } from "../route";
 import { ListContractInputDto, ListContractOutputDto, ListContractUsecase } from "../../../../../usecase/contract/list.usecase";
 import { NotFoundException } from "../../../../../package/exceptions/error.request.exception";
+import { AuthMiddleware } from "../../../../../middleware/auth.middlware";
 
 
 
@@ -35,6 +36,10 @@ export class ListContractRoute implements Route {
     public static build(listContractService: ListContractUsecase) {
         return new ListContractRoute("/contracts", HttpMethod.GET, listContractService);
     };
+
+    public getMiddlewares(): (request: Request, response: Response, next: NextFunction) => Promise<any> {
+        return new AuthMiddleware().execute();
+    }
 
     public getHandler(): (request: Request, response: Response) => Promise<any> {
         return async (request: Request, response: Response) => {

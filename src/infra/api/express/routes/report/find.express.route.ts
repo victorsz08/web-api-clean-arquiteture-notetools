@@ -1,45 +1,50 @@
 import { NextFunction, Request, Response } from "express";
 import { HttpMethod, Route } from "../route";
-import { ListNoteInputDto, ListNoteOutputDto, ListNoteUsecase } from "../../../../../usecase/note/list.usecase";
-import { ListContractInputDto } from "../../../../../usecase/contract/list.usecase";
+import { FindReportInputDto, FindReportOutputDto, FindReportUsecase } from "../../../../../usecase/report/find.usecase";
 import { NotFoundException } from "../../../../../package/exceptions/error.request.exception";
+import { Middleware } from "../../../../../middleware/middleware";
 import { AuthMiddleware } from "../../../../../middleware/auth.middlware";
 
 
 
-export type ListNoteResponseDto = {
-    notes: {
-        id: string;
-        title: string;
-        content: string;
-        createdAt: Date;
-        updatedAt: Date;
-    }[];
+
+export type FindReportresponseDto = {
+    dropoutPercentage: number;
+    installedPercentage: number;
+    dropout: number;
+    installed: number;
+    totalBase: number;
+    totalProspect: number; 
+    billing: number;
+    total: number;
 };
 
-
-export class ListNoteRoute implements Route {
+export class FindReportRoute implements Route {
     
     private constructor(
         private readonly path: string,
         private readonly method: HttpMethod,
-        private readonly listNoteService: ListNoteUsecase
+        private readonly findReportService: FindReportUsecase
     ) {};
-
-    public static build(listNoteService: ListNoteUsecase) {
-        return new ListNoteRoute("/notes/user/:userId", HttpMethod.GET, listNoteService);
+    
+    public static build(findReportService: FindReportUsecase) {
+        return new FindReportRoute("/reports/:userId", HttpMethod.GET, findReportService);
     };
     
+
     public getHandler(): (request: Request, response: Response) => Promise<any> {
         return async (request: Request, response: Response) => {
             const { userId } = request.params;
+            const { startDate, endDate } = request.body;
 
             try {
-                const input: ListNoteInputDto = {
-                    userId
+                const input: FindReportInputDto = {
+                    userId,
+                    startDate,
+                    endDate
                 };
 
-                const data = await this.listNoteService.execute(input);
+                const data = await this.findReportService.execute(input);
 
                 const responseBody = this.presentResponse(data);
 
@@ -48,10 +53,10 @@ export class ListNoteRoute implements Route {
                 if(error instanceof NotFoundException) {
                     return response.status(error.statusCode).json({ error: error.message, statusCode: error.statusCode }).send();
                 };
-
+                
                 return response.status(500).json({ error: "server internal error", statusCode: 500 }).send();
             }
-        }
+        };
     };
 
     public getMiddlewares(): (request: Request, response: Response, next: NextFunction) => Promise<any> {
@@ -66,17 +71,25 @@ export class ListNoteRoute implements Route {
         return this.method;
     };
 
-    private presentResponse({ notes }: ListNoteOutputDto): ListNoteResponseDto {
+    private presentResponse({
+        dropoutPercentage,
+        installedPercentage,
+        dropout,
+        installed,
+        totalBase,
+        totalProspect,
+        total,
+        billing
+    } : FindReportOutputDto): FindReportresponseDto {
         return {
-            notes: notes.map((n) => {
-                return {
-                    id: n.id,
-                    title: n.title,
-                    content: n.content,
-                    createdAt: n.createdAt,
-                    updatedAt: n.updatedAt
-                }
-            })
+            dropoutPercentage,
+            installedPercentage,
+            dropout,
+            installed,
+            totalBase,
+            totalProspect,
+            total,
+            billing
         };
     };
 

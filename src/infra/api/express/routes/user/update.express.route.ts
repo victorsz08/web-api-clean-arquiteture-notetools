@@ -1,7 +1,8 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { HttpMethod, Route } from "../route";
 import { UpdateUserInputDto, UpdateUserOuputDto, UpdateUserUsecase } from "../../../../../usecase/user/update.usecase";
 import { UserExceptions } from "../../../../../package/exceptions/user.exceptions.error";
+import { AuthMiddleware } from "../../../../../middleware/auth.middlware";
 
 
 
@@ -50,6 +51,10 @@ export class UpdateUserRoute implements Route {
             };
         };
     };
+
+    public getMiddlewares(): (request: Request, response: Response, next: NextFunction) => Promise<any> {
+                return new AuthMiddleware().execute();
+    }
 
     public getPath(): string {
         return this.path;

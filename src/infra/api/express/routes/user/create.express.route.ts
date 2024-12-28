@@ -1,7 +1,8 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { HttpMethod, Route } from "../route";
 import { CreateUserInputDto, CreateUserOutputDto, CreateUserUsecase } from "../../../../../usecase/user/create.usecase";
 import { UserExceptions } from "../../../../../package/exceptions/user.exceptions.error";
+import { AuthMiddleware } from "../../../../../middleware/auth.middlware";
 
 
 
@@ -22,6 +23,10 @@ export class CreateUserRoute implements Route {
     public static build(createUserService: CreateUserUsecase) {
         return new CreateUserRoute("/users", HttpMethod.POST, createUserService);
     };
+
+    public getMiddlewares(): (request: Request, response: Response, next: NextFunction) => Promise<any> {
+        return new AuthMiddleware().execute();
+    }
     
     public getHandler(): (request: Request, response: Response) => Promise<any> {
         return async (request: Request, response: Response) => {
@@ -45,7 +50,7 @@ export class CreateUserRoute implements Route {
                     return response.status(409).json({ error: error.message, statusCode: 409 }).send();
                 };
 
-                return response.status(500).json({ error: "server internal error", statusCode: 500 }).send();
+                return response.status(500).json({ error: "server internal error"+error, statusCode: 500 }).send();
             };
         };
     };

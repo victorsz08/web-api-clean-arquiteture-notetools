@@ -1,7 +1,8 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { HttpMethod, Route } from "../route";
 import { AlterPasswordInputDto, AlterPasswordUsecase } from "../../../../../usecase/user/alter-password.usecase";
 import { UserExceptions } from "../../../../../package/exceptions/user.exceptions.error";
+import { AuthMiddleware } from "../../../../../middleware/auth.middlware";
 
 
 
@@ -42,6 +43,10 @@ export class AlterPasswordRoute implements Route {
             };
         };
     };
+
+    public getMiddlewares(): (request: Request, response: Response, next: NextFunction) => Promise<any> {
+        return new AuthMiddleware().execute();
+    }
 
     public getPath(): string {
         return this.path;

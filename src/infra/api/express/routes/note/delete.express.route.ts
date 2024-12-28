@@ -1,44 +1,41 @@
 import { NextFunction, Request, Response } from "express";
 import { HttpMethod, Route } from "../route";
-import { DeleteUserInputDto, DeleteUserUsecase } from "../../../../../usecase/user/delete.usecase";
-import { UserExceptions } from "../../../../../package/exceptions/user.exceptions.error";
+import { DeleteNoteInputDto, DeleteNoteUsecase } from "../../../../../usecase/note/delete.usecase";
+import { NotFoundException } from "../../../../../package/exceptions/error.request.exception";
 import { AuthMiddleware } from "../../../../../middleware/auth.middlware";
 
 
 
 
-
-export class DeleteUserRoute implements Route {
+export class DeleteNoteRoute implements Route {
     
     private constructor(
         private readonly path: string,
         private readonly method: HttpMethod,
-        private readonly deleteUserService: DeleteUserUsecase
+        private readonly deleteNoteService: DeleteNoteUsecase
     ) {};
-    
-    public static build(deleteUserService: DeleteUserUsecase) {
-        return new DeleteUserRoute("/users/:id", HttpMethod.DELETE, deleteUserService);
-    };
 
+    public static build(deleteNoteService: DeleteNoteUsecase) {
+        return new DeleteNoteRoute("/notes/:id", HttpMethod.DELETE, deleteNoteService);
+    };
+    
     public getHandler(): (request: Request, response: Response) => Promise<any> {
         return async (request: Request, response: Response) => {
             const { id } = request.params;
 
-
             try {
-                const input: DeleteUserInputDto = {
+                const input: DeleteNoteInputDto = {
                     id
                 };
 
-                await this.deleteUserService.execute(input);
+                await this.deleteNoteService.execute(input);
 
-
-                return response.status(200).json({ message: "ok" }).send();
+                return response.status(200).json({ message: "OK!" }).send();
             } catch (error) {
-                if(error instanceof UserExceptions) {
-                    return response.status(404).json({ error: error.message, statusCode: 404 }).send();
+                if(error instanceof NotFoundException) {
+                    return response.status(error.statusCode).json({ error: error.message, statusCode: error.statusCode }).send();
                 };
-
+                
                 return response.status(500).json({ error: "server internal error", statusCode: 500 }).send();
             };
         };
@@ -55,4 +52,5 @@ export class DeleteUserRoute implements Route {
     public getMethod(): HttpMethod {
         return this.method;
     };
+
 };

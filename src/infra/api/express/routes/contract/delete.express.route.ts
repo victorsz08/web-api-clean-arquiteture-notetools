@@ -1,7 +1,8 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { HttpMethod, Route } from "../route";
 import { DeleteContractInputDto, DeleteContractUsecase } from "../../../../../usecase/contract/delete.usecase";
 import { NotFoundException } from "../../../../../package/exceptions/error.request.exception";
+import { AuthMiddleware } from "../../../../../middleware/auth.middlware";
 
 
 
@@ -41,6 +42,10 @@ export class DeleteContractRoute implements Route {
             };
         };
     };
+
+    public getMiddlewares(): (request: Request, response: Response, next: NextFunction) => Promise<any> {
+        return new AuthMiddleware().execute();
+    }
 
     public getPath(): string {
         return this.path;

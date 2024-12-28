@@ -1,8 +1,9 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { HttpMethod, Route } from "../route";
 import { SessionInputDto, SessionOutputDto, SessionUsecase } from "../../../../../usecase/session/session.usecase";
 import { User } from "../../../../../domain/entities/user/user.entity";
 import { UserExceptions } from "../../../../../package/exceptions/user.exceptions.error";
+import { AuthMiddleware } from "../../../../../middleware/auth.middlware";
 
 
 
@@ -58,6 +59,9 @@ export class SessionRoute implements Route {
         };
     };
 
+    public getMiddlewares(): (request: Request, response: Response, next: NextFunction) => Promise<any> {
+        return new AuthMiddleware().execute();
+    }
 
     public getPath(): string {
         return this.path;

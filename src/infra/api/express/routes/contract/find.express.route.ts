@@ -1,8 +1,9 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { Status, TypeContract } from "../../../../../domain/entities/contract/contract.entity";
 import { HttpMethod, Route } from "../route";
 import { FindContractInputDto, FindContractOutputDto, FindContractUsecase } from "../../../../../usecase/contract/find.usecase";
 import { NotFoundException } from "../../../../../package/exceptions/error.request.exception";
+import { AuthMiddleware } from "../../../../../middleware/auth.middlware";
 
 
 
@@ -59,6 +60,10 @@ export class FindContractRoute implements Route {
             };
         };
     };
+
+    public getMiddlewares(): (request: Request, response: Response, next: NextFunction) => Promise<any> {
+        return new AuthMiddleware().execute();
+    }
 
     public getPath(): string {
         return this.path;

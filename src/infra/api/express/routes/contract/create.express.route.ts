@@ -1,7 +1,8 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { HttpMethod, Route } from "../route";
 import { CreateContractInputDto, CreateContractOutputDto, CreateContractUsecase } from "../../../../../usecase/contract/create.usecase";
 import { NotFoundException } from "../../../../../package/exceptions/error.request.exception";
+import { AuthMiddleware } from "../../../../../middleware/auth.middlware";
 
 
 
@@ -22,6 +23,10 @@ export class CreateContractRoute implements Route {
     public static build(createContractService: CreateContractUsecase) {
         return new CreateContractRoute("/contracts/:userId", HttpMethod.POST, createContractService);
     };
+
+    public getMiddlewares(): (request: Request, response: Response, next: NextFunction) => Promise<any> {
+        return new AuthMiddleware().execute();
+    }
 
     public getHandler(): (request: Request, response: Response) => Promise<any> {
         return async (request: Request, response: Response) => {

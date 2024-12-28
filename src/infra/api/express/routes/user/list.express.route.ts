@@ -1,7 +1,8 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { HttpMethod, Route } from "../route";
 import { ListUserInputDto, ListUserOutputDto, ListUserUsecase } from "../../../../../usecase/user/list.usecase";
 import { UserExceptions } from "../../../../../package/exceptions/user.exceptions.error";
+import { AuthMiddleware } from "../../../../../middleware/auth.middlware";
 
 
 
@@ -29,6 +30,10 @@ export class ListUserRoute implements Route {
     public static build(listUserService: ListUserUsecase) {
         return new ListUserRoute("/users", HttpMethod.GET, listUserService);
     };
+
+    public getMiddlewares(): (request: Request, response: Response, next: NextFunction) => Promise<any> {
+            return new AuthMiddleware().execute();
+    }
     
     public getHandler(): (request: Request, response: Response) => Promise<any> {
         return async (request: Request, response: Response) => {

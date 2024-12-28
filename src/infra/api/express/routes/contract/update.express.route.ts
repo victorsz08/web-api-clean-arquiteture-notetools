@@ -1,7 +1,8 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { HttpMethod, Route } from "../route";
 import { UpdateContractInputDto, UpdateContractOutputDto, UpdateContractUsecase } from "../../../../../usecase/contract/update.usecase";
 import { NotFoundException } from "../../../../../package/exceptions/error.request.exception";
+import { AuthMiddleware } from "../../../../../middleware/auth.middlware";
 
 
 
@@ -23,6 +24,10 @@ export class UpdateContractRoute implements Route {
     public static build(updateContractService: UpdateContractUsecase) {
         return new UpdateContractRoute("/contracts/:id", HttpMethod.PUT, updateContractService);
     };
+
+    public getMiddlewares(): (request: Request, response: Response, next: NextFunction) => Promise<any> {
+        return new AuthMiddleware().execute();
+    }
     
     public getHandler(): (request: Request, response: Response) => Promise<any> {
         return async (request: Request, response: Response) => {

@@ -1,7 +1,8 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { HttpMethod, Route } from "../route";
 import { FindUserInputDto, FindUserOutputDto, FindUserUsecase } from "../../../../../usecase/user/find.usecase";
 import { UserExceptions } from "../../../../../package/exceptions/user.exceptions.error";
+import { AuthMiddleware } from "../../../../../middleware/auth.middlware";
 
 
 
@@ -51,6 +52,10 @@ export class FindUserRoute implements Route {
             };
         };
     };
+
+    public getMiddlewares(): (request: Request, response: Response, next: NextFunction) => Promise<any> {
+                return new AuthMiddleware().execute();
+    }
 
     public getPath(): string {
         return this.path;
